@@ -1,6 +1,6 @@
 library(plyr)
 
-## 1.) Loading and merging the data:
+# 1.) Loading and merging the data:
 
 # Read the train data set.
 X_train <- read.table(".\\UCI HAR Dataset\\train\\X_train.txt")
@@ -17,7 +17,7 @@ subject_all <- rbind(subject_train, subject_test)
 # Bind the columns of X-all, y_all and subject_all.
 X_y_s_all <- cbind(X_all, y_all, subject_all)
 
-## 2.) Extracts mean and standard measurements:
+# 2.) Extracts mean and standard measurements:
 
 # First read features table.
 features <- read.table(".\\UCI HAR Dataset\\features.txt")
@@ -29,7 +29,7 @@ X_y_s_all_mean_sd <- X_y_s_all[, grepl("mean\\(|std\\(", features[, 2], ignore.c
 # Upper case first letter of "mean" and "std" since it improves readability.
 names(X_y_s_all_mean_sd) <- gsub("std", "Std", gsub("mean", "Mean", gsub("\\(\\)|-", "", features[grepl("mean\\(|std\\(", features[, 2], ignore.case = TRUE), 2])))
 
-## 3.) Load and prepare clean "activity_labels":
+# 3.) Load and prepare clean "activity_labels":
 
 # Read the activity_labels data set.
 activity_labels <- read.table(".\\UCI HAR Dataset\\activity_labels.txt")
@@ -41,7 +41,7 @@ activity_labels[, 2] <- gsub("STANDING", "standing",
                         gsub("UPSTAIRS", "Upstairs",
                         gsub("DOWNSTAIRS", "Downstairs", (activity_labels[, 2])))))))
 
-## 4.) Label the data set:
+# 4.) Label the data set:
 
 # Prepare the column names to be able to "left join" the activity labels.
 colnames(X_y_s_all_mean_sd)[67] <- "leftJoinOn"
@@ -54,7 +54,7 @@ tidyDataSet <- merge(X_y_s_all_mean_sd, activity_labels, by = "leftJoinOn")[, 2:
 write.table(tidyDataSet, "tidyDataSet.txt", row.name = FALSE)
 
 
-## 5.) Creates tidy data set with the average of each variable for each activity/subject.
+# 5.) Creates tidy data set with the average of each variable for each activity/subject.
 
 # Calculate the means for all columns except subject/activity.
 meansTidyDataSet <- ddply(tidyDataSet, .(subject, activity), function(x) colMeans(x[,c(1:66)]))
